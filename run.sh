@@ -1,11 +1,11 @@
 #!/usr/bin/bash
 
-[ $CONTAINERNAME ] || CONTAINERNAME="ubuntu-20.04-dev"
+[ $CONTAINERNAME ] || CONTAINERNAME="ubuntu-custom"
 [ $CONTAINERUSER ] || CONTAINERUSER="$USER"
 
 [ $HOSTNAME ] || HOSTNAME=`hostname`
-WORKDIR=`dirname $0`
-echo "*** Container ${CONTAINERNAME} running on $HOSTNAME (WD=$WORKDIR) ***"
+[ $DOCKERFILEDIR ] || DOCKERFILEDIR=`pwd`
+echo "*** Container ${CONTAINERNAME} running on $HOSTNAME (DIR=$DOCKERFILEDIR) ***"
 
 [ $DOCKER ] || DOCKER=`which docker`
 [ ! $DOCKER ] && echo "Installing docker.io ..." && sudo apt install docker.io && DOCKER=`which docker`
@@ -18,7 +18,7 @@ echo "*** Container parameters : home=${CONTAINERHOME} , user=${CONTAINERUSER} *
 
 # build docker image if not present
 DOCKERBUILT=`sudo $DOCKER images | grep -c "${CONTAINERNAME}.*latest"`
-[ $DOCKERBUILT -eq 0 ] && echo "Building ${CONTAINERNAME} docker image ..." && sudo ${DOCKER} build --build-arg USERNAME=${CONTAINERUSER} -t ${CONTAINERNAME} ${WORKDIR}
+[ $DOCKERBUILT -eq 0 ] && echo "Building ${CONTAINERNAME} docker image ..." && sudo ${DOCKER} build --build-arg USERNAME=${CONTAINERUSER} -t ${CONTAINERNAME} ${DOCKERFILEDIR}
 DOCKERBUILT=`sudo $DOCKER images | grep -c "${CONTAINERNAME}.*latest"`
 [ $DOCKERBUILT -eq 0 ] && echo "Failed to build docker image, aborting" && exit 1
 
@@ -27,7 +27,7 @@ DOCKERBUILT=`sudo $DOCKER images | grep -c "${CONTAINERNAME}.*latest"`
 [ ! $XHOST ] && echo "Can't find xhost, aborting" && exit 1
 ${XHOST} +
 
-# Run FlatCAM in docker
+# Run container
 sudo ${DOCKER} run --network=host --interactive \
                 -v /tmp/.X11-unix:/tmp/.X11-unix -v /tmp/.X11-unix:/tmp/.X11-unix \
                 -v ${CONTAINERHOME}:/home/${CONTAINERUSER}  -v $HOME/.Xauthority:/home/${CONTAINERUSER}/.Xauthority \

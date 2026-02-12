@@ -1,6 +1,6 @@
 VNCDISPLAY=:1
 echo "start xvfb on $VNCDISPLAY"
-Xvfb "$VNCDISPLAY" -screen 0 1024x768x24 &
+Xvfb "$VNCDISPLAY" -screen 0 1920x1080x24 &
 sleep 1
 echo "start window manager & VNC server"
 fluxbox -display "$VNCDISPLAY" &

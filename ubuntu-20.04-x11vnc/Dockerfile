@@ -36,6 +36,6 @@ WORKDIR /home/$USERNAME
 ADD --chown=root:root ./start-x11-vnc.sh /usr/bin/
 
 # Run graphical terminal app from container with display forwared to host
-CMD [ "/usr/bin/xterm" ]
-#CMD /usr/bin/bash /usr/bin/start-x11-vnc.sh
+#CMD [ "/usr/bin/xterm" ]
+CMD /usr/bin/bash /usr/bin/start-x11-vnc.sh
 
